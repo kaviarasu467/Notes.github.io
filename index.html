@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Clock with Alarm</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+      background: linear-gradient(to right, #1f4037, #99f2c8);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-size: cover;
+      transition: background 0.5s;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px #000;
+    }
+
+    .clock {
+      display: flex;
+      gap: 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .timezone {
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      min-width: 180px;
+    }
+
+    .timezone h2 {
+      margin: 0 0 10px;
+      font-size: 1.2em;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .timezone p {
+      font-size: 1.5em;
+      margin: 0;
+    }
+
+    .alarm {
+      margin-top: 20px;
+      background: rgba(0,0,0,0.5);
+      padding: 15px 20px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    .alarm input {
+      padding: 5px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .alarm button {
+      padding: 5px 10px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: none;
+      background-color: #ff4b5c;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>World Clock 🌍</h1>
+
+  <div class="clock">
+    <div class="timezone">
+      <h2>New York</h2>
+      <p id="ny-time">--:--:--</p>
+    </div>
+    <div class="timezone">
+      <h2>London</h2>
+      <p id="london-time">--:--:--</p>
+    </div>
+    <div class="timezone">
+      <h2>Tokyo</h2>
+      <p id="tokyo-time">--:--:--</p>
+    </div>
+    <div class="timezone">
+      <h2>India</h2>
+      <p id="india-time">--:--:--</p>
+    </div>
+  </div>
+
+  <div class="alarm">
+    <input type="time" id="alarm-time">
+    <button onclick="setAlarm()">Set Alarm ⏰</button>
+    <p id="alarm-msg"></p>
+  </div>
+
+  <audio id="alarm-sound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+
+  <script>
+    const nyTime = document.getElementById('ny-time');
+    const londonTime = document.getElementById('london-time');
+    const tokyoTime = document.getElementById('tokyo-time');
+    const indiaTime = document.getElementById('india-time');
+    const alarmSound = document.getElementById('alarm-sound');
+    const alarmMsg = document.getElementById('alarm-msg');
+
+    let alarmTime = null;
+
+    function updateClocks() {
+      const now = new Date();
+
+      nyTime.textContent = now.toLocaleTimeString('en-US', { timeZone: 'America/New_York' });
+      londonTime.textContent = now.toLocaleTimeString('en-GB', { timeZone: 'Europe/London' });
+      tokyoTime.textContent = now.toLocaleTimeString('ja-JP', { timeZone: 'Asia/Tokyo' });
+      indiaTime.textContent = now.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' });
+
+      checkAlarm(now);
+    }
+
+    function setAlarm() {
+      const input = document.getElementById('alarm-time').value;
+      if (!input) return alert("Please select a time!");
+      alarmTime = input;
+      alarmMsg.textContent = `Alarm set for ${alarmTime}`;
+    }
+
+    function checkAlarm(now) {
+      if (!alarmTime) return;
+
+      const [hours, minutes] = alarmTime.split(":").map(Number);
+      if (now.getHours() === hours && now.getMinutes() === minutes && now.getSeconds() === 0) {
+        alarmSound.play();
+        alarmMsg.textContent = "⏰ Alarm ringing!";
+        alarmTime = null; // stop repeating
+      }
+    }
+
+    setInterval(updateClocks, 1000);
+    updateClocks();
+  </script>
+
+</body>
+</html>
